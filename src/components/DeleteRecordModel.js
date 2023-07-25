@@ -7,11 +7,10 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton,
   Button,
 } from "@chakra-ui/react";
 
-const DeleteButtonModel = ({ isOpen, onClose }) => {
+const DeleteRecordModel = ({ itemDelete, isOpen, onClose, deleteRecord }) => {
   const cancelRef = React.useRef();
 
   const [isLoading, setisLoading] = useState(false);
@@ -38,7 +37,12 @@ const DeleteButtonModel = ({ isOpen, onClose }) => {
             </Button>
             <Button
               colorScheme="red"
-              onClick={onClose}
+              onClick={async () => {
+                setisLoading(true);
+                await deleteRecord(itemDelete);
+                setisLoading(false);
+                onClose();
+              }}
               ml={3}
               isLoading={isLoading}
               loadingText={"Proceeding..."}
@@ -52,4 +56,4 @@ const DeleteButtonModel = ({ isOpen, onClose }) => {
   );
 };
 
-export default DeleteButtonModel;
+export default DeleteRecordModel;
