@@ -7,43 +7,41 @@ import {
   HStack,
   Heading,
   Input,
-  Select,
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import AddCategoryModel from "../../components/AddCategoryModel";
 import { Field, Form, Formik } from "formik";
-import { ColorsCategory } from "../../Config/colors";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../Config/Url";
+import { useDispatch, useSelector } from "react-redux";
 import ListCategory from "../../components/ListCategory";
-import { TypesStyle_Data } from "../../Store/Categories/CategoriesActions";
+import { Review_Data } from "../../Store/Reviews/ReviewActions";
 
-const TypeStyleCategory = () => {
+const Sizes = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const TypeStyleCate = useSelector((state) => state.Categories.TypeStyle);
-
+  const ReviewState = useSelector((state) => state.Reviews.reviews);
+  //   console.log(ReviewState);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   function validateName(value) {
     let error;
     if (!value) {
-      error = "Type Style is required";
+      error = "Size is required";
     }
     return error;
   }
 
-  const getallTypeStyle = async () => {
+  const getallReviews = async () => {
     setIsLoading(true);
     return await axios
-      .get(`${BASE_URL}/TypeStyle`)
+      .get(`${BASE_URL}/Review`)
       .then((resp) => {
-        // console.log(resp.data);
-        dispatch(TypesStyle_Data(resp.data.response));
+        console.log(resp.data);
+        dispatch(Review_Data(resp.data.response));
         setIsLoading(false);
       })
       .catch((error) => {
@@ -54,26 +52,26 @@ const TypeStyleCategory = () => {
 
   const deleteRecord = async (id) => {
     return await axios
-      .delete(`${BASE_URL}/TypeStyle`, {
+      .delete(`${BASE_URL}/Review`, {
         data: {
-          name: id,
+          id: id,
         },
       })
       .then(() => {
-        getallTypeStyle();
+        getallReviews();
       })
       .catch((error) => {
         console.warn(error);
       });
   };
 
-  const AddTypeStyle = async (name) => {
+  const AddSize = async (name) => {
     return await axios
-      .post(`${BASE_URL}/TypeStyle`, {
+      .post(`${BASE_URL}/Review`, {
         name: name,
       })
       .then((resp) => {
-        getallTypeStyle();
+        getallReviews();
       })
       .catch((error) => {
         console.warn(error);
@@ -81,19 +79,20 @@ const TypeStyleCategory = () => {
   };
 
   useEffect(() => {
-    getallTypeStyle();
+    getallReviews();
   }, []);
+
   return (
     <Box>
       <AddCategoryModel
         isOpen={isOpen}
         onClose={onClose}
-        ModalTitle={"Add Type Style"}
+        ModalTitle={"Add Sizes"}
         modelBody={
           <Formik
-            initialValues={{ typestylename: "" }}
+            initialValues={{ sizes: "" }}
             onSubmit={async (values, actions) => {
-              await AddTypeStyle(values.typestylename)
+              await AddSize(values.sizes)
                 .then(() => {
                   actions.setSubmitting(false);
                   onClose();
@@ -107,20 +106,15 @@ const TypeStyleCategory = () => {
             {(props) => (
               <Form>
                 <VStack>
-                  <Field name="typestylename" validate={validateName}>
+                  <Field name="sizes" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={
-                          form.errors.typestylename &&
-                          form.touched.typestylename
-                        }
+                        isInvalid={form.errors.sizes && form.touched.sizes}
                         isRequired
                       >
-                        <FormLabel>Type Style Name</FormLabel>
-                        <Input {...field} placeholder="Type Style Name" />
-                        <FormErrorMessage>
-                          {form.errors.typestylename}
-                        </FormErrorMessage>
+                        <FormLabel>Size Name</FormLabel>
+                        <Input {...field} placeholder="Size Name" />
+                        <FormErrorMessage>{form.errors.sizes}</FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>
@@ -160,15 +154,12 @@ const TypeStyleCategory = () => {
         justifyContent={"space-between"}
       >
         <Heading size={"md"} my={"2"}>
-          Type Style Category
+          Reviews
         </Heading>
-        <Button colorScheme={"blue"} onClick={() => onOpen()}>
-          Add New Type Style
-        </Button>
       </Box>
       <ListCategory
-        THeadsList={["NAME"]}
-        ListData={TypeStyleCate}
+        THeadsList={["Title", "Description"]}
+        ListData={ReviewState}
         deleteRecord={deleteRecord}
         isLoading={isLoading}
       />
@@ -176,4 +167,4 @@ const TypeStyleCategory = () => {
   );
 };
 
-export default TypeStyleCategory;
+export default Sizes;

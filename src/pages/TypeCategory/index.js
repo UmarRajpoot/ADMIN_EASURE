@@ -11,21 +11,78 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AddCategoryModel from "../../components/AddCategoryModel";
 import { Field, Form, Formik } from "formik";
 import { ColorsCategory } from "../../Config/colors";
+import { BASE_URL } from "../../Config/Url";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { Types_Data } from "../../Store/Categories/CategoriesActions";
+import ListCategory from "../../components/ListCategory";
 
 const TypeCategory = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const TypeCate = useSelector((state) => state.Categories.Type);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+
   function validateName(value) {
     let error;
     if (!value) {
-      error = "Color Name is required";
+      error = "Type Name is required";
     }
     return error;
   }
+
+  const getallType = async () => {
+    setIsLoading(true);
+    return await axios
+      .get(`${BASE_URL}/Type`)
+      .then((resp) => {
+        // console.log(resp.data);
+        dispatch(Types_Data(resp.data.response));
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.warn(error);
+        setIsLoading(false);
+      });
+  };
+
+  const deleteRecord = async (id) => {
+    return await axios
+      .delete(`${BASE_URL}/Type`, {
+        data: {
+          name: id,
+        },
+      })
+      .then(() => {
+        getallType();
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
+
+  const AddType = async (name) => {
+    return await axios
+      .post(`${BASE_URL}/Type`, {
+        name: name,
+      })
+      .then((resp) => {
+        getallType();
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
+
+  useEffect(() => {
+    getallType();
+  }, []);
   return (
     <Box>
       <AddCategoryModel
@@ -36,10 +93,15 @@ const TypeCategory = () => {
           <Formik
             initialValues={{ typename: "" }}
             onSubmit={(values, actions) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                actions.setSubmitting(false);
-              }, 1000);
+              AddType(values.typename)
+                .then(() => {
+                  actions.setSubmitting(false);
+                  onClose();
+                })
+                .catch((error) => {
+                  actions.setSubmitting(false);
+                  onClose();
+                });
             }}
           >
             {(props) => (
@@ -49,7 +111,7 @@ const TypeCategory = () => {
                     {({ field, form }) => (
                       <FormControl
                         isInvalid={
-                          form.errors.personname && form.touched.typename
+                          form.errors.typename && form.touched.typename
                         }
                         isRequired
                       >
@@ -103,6 +165,12 @@ const TypeCategory = () => {
           Add New Type
         </Button>
       </Box>
+      <ListCategory
+        THeadsList={["NAME"]}
+        ListData={TypeCate}
+        deleteRecord={deleteRecord}
+        isLoading={isLoading}
+      />
     </Box>
   );
 };

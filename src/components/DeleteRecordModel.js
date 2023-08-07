@@ -10,7 +10,13 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-const DeleteRecordModel = ({ itemDelete, isOpen, onClose, deleteRecord }) => {
+const DeleteRecordModel = ({
+  itemDelete,
+  itemPhoto,
+  isOpen,
+  onClose,
+  deleteRecord,
+}) => {
   const cancelRef = React.useRef();
 
   const [isLoading, setisLoading] = useState(false);
@@ -39,7 +45,7 @@ const DeleteRecordModel = ({ itemDelete, isOpen, onClose, deleteRecord }) => {
               colorScheme="red"
               onClick={async () => {
                 setisLoading(true);
-                await deleteRecord(itemDelete);
+                await deleteRecord(itemDelete, itemPhoto);
                 setisLoading(false);
                 onClose();
               }}

@@ -17,21 +17,21 @@ import { Field, Form, Formik } from "formik";
 import axios from "axios";
 import { BASE_URL } from "../../Config/Url";
 import { useDispatch, useSelector } from "react-redux";
-import { getallPCat_Data } from "../../Store/ParentCategory/PCActions";
+import { PCat_Data } from "../../Store/Categories/CategoriesActions";
 
 const PCategory = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const getAllCate = useSelector((state) => state.ParentCategory.PCat);
+  const getAllCate = useSelector((state) => state.Categories.PCat);
 
   const dispatch = useDispatch();
 
   function validateName(value) {
     let error;
     if (!value) {
-      error = "Color Name is required";
+      error = "Parent Name is required";
     }
     return error;
   }
@@ -41,7 +41,7 @@ const PCategory = () => {
     return await axios
       .get(`${BASE_URL}/PCateg`)
       .then((resp) => {
-        dispatch(getallPCat_Data(resp.data.response));
+        dispatch(PCat_Data(resp.data.response));
         setIsLoading(false);
       })
       .catch((error) => {
@@ -52,7 +52,7 @@ const PCategory = () => {
 
   const deleteRecord = async (id) => {
     return await axios
-      .delete(`${BASE_URL}/PCateg/`, {
+      .delete(`${BASE_URL}/PCateg`, {
         data: {
           name: id,
         },
@@ -120,8 +120,8 @@ const PCategory = () => {
                         }
                         isRequired
                       >
-                        <FormLabel>Category Name</FormLabel>
-                        <Input {...field} placeholder="Category Name" />
+                        <FormLabel>Parent Category Name</FormLabel>
+                        <Input {...field} placeholder="Parent Category Name" />
                         <FormErrorMessage>
                           {form.errors.parentCategory}
                         </FormErrorMessage>
@@ -171,6 +171,7 @@ const PCategory = () => {
         </Button>
       </Box>
       <ListCategory
+        THeadsList={["NAME"]}
         ListData={getAllCate}
         deleteRecord={deleteRecord}
         isLoading={isLoading}

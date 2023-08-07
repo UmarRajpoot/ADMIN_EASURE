@@ -1,10 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import PcategoryReducer from "./ParentCategory/PCReducer";
+import Categories from "./Categories/CategoriesReducer";
+import Products from "./Product/ProductReducer";
+import Orders from "./Orders/OrderReducer";
+import Auth from "./Auth/AuthReducer";
+import Reviews from "./Reviews/ReviewReducer";
 
 const store = configureStore({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: false,
+      serializableCheck: false,
+    }),
   reducer: {
-    ParentCategory: PcategoryReducer,
+    Categories: Categories,
+    Products: Products,
+    OrderOptions: Orders,
+    Auths: Auth,
+    Reviews: Reviews,
   },
 });
 

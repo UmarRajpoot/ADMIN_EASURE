@@ -10,20 +10,77 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AddCategoryModel from "../../components/AddCategoryModel";
 import { Field, Form, Formik } from "formik";
+import axios from "axios";
+import { BASE_URL } from "../../Config/Url";
+import { useDispatch, useSelector } from "react-redux";
+import { Sizes_Data } from "../../Store/Categories/CategoriesActions";
+import ListCategory from "../../components/ListCategory";
 
 const Sizes = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const Sizes = useSelector((state) => state.Categories.Sizes);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+
   function validateName(value) {
     let error;
     if (!value) {
-      error = "Color Name is required";
+      error = "Size is required";
     }
     return error;
   }
+
+  const getallSizes = async () => {
+    setIsLoading(true);
+    return await axios
+      .get(`${BASE_URL}/Sizes`)
+      .then((resp) => {
+        // console.log(resp.data);
+        dispatch(Sizes_Data(resp.data.response));
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.warn(error);
+        setIsLoading(false);
+      });
+  };
+
+  const deleteRecord = async (id) => {
+    return await axios
+      .delete(`${BASE_URL}/Sizes`, {
+        data: {
+          name: id,
+        },
+      })
+      .then(() => {
+        getallSizes();
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
+
+  const AddSize = async (name) => {
+    return await axios
+      .post(`${BASE_URL}/Sizes`, {
+        name: name,
+      })
+      .then((resp) => {
+        getallSizes();
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
+
+  useEffect(() => {
+    getallSizes();
+  }, []);
 
   return (
     <Box>
@@ -34,11 +91,16 @@ const Sizes = () => {
         modelBody={
           <Formik
             initialValues={{ sizes: "" }}
-            onSubmit={(values, actions) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                actions.setSubmitting(false);
-              }, 1000);
+            onSubmit={async (values, actions) => {
+              await AddSize(values.sizes)
+                .then(() => {
+                  actions.setSubmitting(false);
+                  onClose();
+                })
+                .catch((error) => {
+                  actions.setSubmitting(false);
+                  onClose();
+                });
             }}
           >
             {(props) => (
@@ -98,6 +160,12 @@ const Sizes = () => {
           Add New Size
         </Button>
       </Box>
+      <ListCategory
+        THeadsList={["NAME"]}
+        ListData={Sizes}
+        deleteRecord={deleteRecord}
+        isLoading={isLoading}
+      />
     </Box>
   );
 };

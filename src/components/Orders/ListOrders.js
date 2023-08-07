@@ -14,19 +14,25 @@ import {
 } from "@chakra-ui/react";
 
 import { AiOutlineDelete } from "react-icons/ai";
-import DeleteButtonModel from "./DeleteRecordModel";
-import LoadingTable from "./LoadingTable";
+import DeleteButtonModel from "../DeleteRecordModel";
+import LoadingTable from "../LoadingTable";
+import ListOrderModel from "../Model/ListOrderModel";
 
-const ListCategory = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
+const ListOrders = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const ModelOrder = useDisclosure();
   const [deleteID, setDeleteID] = useState("");
-  const [phototUrl, setphototUrl] = useState("");
+  const [selectRow, setSelectRow] = useState("");
 
   return (
     <Box>
+      <ListOrderModel
+        isOpen={ModelOrder.isOpen}
+        onClose={ModelOrder.onClose}
+        showRow={selectRow}
+      />
       <DeleteButtonModel
         itemDelete={deleteID}
-        itemPhoto={phototUrl}
         isOpen={isOpen}
         onClose={onClose}
         deleteRecord={deleteRecord}
@@ -52,28 +58,21 @@ const ListCategory = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
                     key={index.toString()}
                     fontSize={"sm"}
                     _hover={{ bgColor: "gray.200", cursor: "pointer" }}
+                    onClick={() => {
+                      setSelectRow(list);
+                      ModelOrder.onOpen();
+                    }}
                   >
                     <Td>{index + 1}</Td>
-                    {list.title && <Td>{list.title}</Td>}
-                    {list.desc && <Td>{list.desc}</Td>}
-                    {list.name && <Td>{list.name.toUpperCase()}</Td>}
+                    <Td>{list.country}</Td>
+                    <Td>{list.firstname}</Td>
+                    <Td>{list.lastname}</Td>
+                    <Td>{list.address}</Td>
+                    <Td>{list.city}</Td>
+                    <Td>{list.state}</Td>
+                    <Td>{list.zipcode}</Td>
+                    <Td>{list.phone}</Td>
 
-                    {list.colorcode && (
-                      <Td>
-                        <Box
-                          p={"3"}
-                          w={"2"}
-                          rounded={"full"}
-                          bgColor={list.colorcode}
-                        ></Box>
-                      </Td>
-                    )}
-                    {list.colorType && <Td>{list.colorType.toUpperCase()}</Td>}
-                    {list.photo && (
-                      <Td>
-                        <Image src={list.photo} width={20} height={20} />
-                      </Td>
-                    )}
                     <Td>
                       <IconButton
                         colorScheme="red"
@@ -81,12 +80,7 @@ const ListCategory = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
                         aria-label="Search database"
                         icon={<AiOutlineDelete size={20} />}
                         onClick={() => {
-                          if (list.name) {
-                            setDeleteID(list.name);
-                          } else {
-                            setDeleteID(list.id);
-                          }
-                          setphototUrl(list.photo);
+                          setDeleteID(list.id);
                           onOpen();
                         }}
                       />
@@ -101,4 +95,4 @@ const ListCategory = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
   );
 };
 
-export default ListCategory;
+export default ListOrders;
