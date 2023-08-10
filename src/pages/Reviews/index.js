@@ -158,7 +158,7 @@ const Sizes = () => {
         </Heading>
       </Box>
       <ListCategory
-        THeadsList={["Title", "Description"]}
+        THeadsList={["Score", "Title", "Description"]}
         ListData={ReviewState}
         deleteRecord={deleteRecord}
         isLoading={isLoading}

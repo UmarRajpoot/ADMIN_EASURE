@@ -11,11 +11,13 @@ import {
   IconButton,
   useDisclosure,
   Image,
+  HStack,
 } from "@chakra-ui/react";
 
 import { AiOutlineDelete } from "react-icons/ai";
 import DeleteButtonModel from "./DeleteRecordModel";
 import LoadingTable from "./LoadingTable";
+import { GrStar } from "react-icons/gr";
 
 const ListCategory = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -54,6 +56,17 @@ const ListCategory = ({ THeadsList, ListData, deleteRecord, isLoading }) => {
                     _hover={{ bgColor: "gray.200", cursor: "pointer" }}
                   >
                     <Td>{index + 1}</Td>
+                    {list.title && (
+                      <Td>
+                        <HStack>
+                          {Array.from({ length: list.starcount }).map(
+                            (star) => {
+                              return <GrStar />;
+                            }
+                          )}
+                        </HStack>
+                      </Td>
+                    )}
                     {list.title && <Td>{list.title}</Td>}
                     {list.desc && <Td>{list.desc}</Td>}
                     {list.name && <Td>{list.name.toUpperCase()}</Td>}
