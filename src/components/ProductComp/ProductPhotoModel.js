@@ -15,6 +15,7 @@ import {
   SimpleGrid,
   Progress,
   Image,
+  HStack,
 } from "@chakra-ui/react";
 import { FcAddImage, FcVideoCall } from "react-icons/fc";
 import { BASE_URL } from "../../Config/Url";
@@ -31,6 +32,9 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
   const [Videoname, setVideoname] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
   const [Videos, AddVideos] = useState([]);
+
+  const [videoURL, setVideoURL] = useState("");
+  const [videoLoading, setVideoLoading] = useState(false);
 
   const [photoProgress, setPhotoProgress] = useState(0);
   const [isProgressBar, setIsProgressBar] = useState(false);
@@ -135,8 +139,8 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
       AddImages(showRow.productimage);
     }
     if (showRow.productvideo) {
-      AddVideos([showRow.productvideo]);
-      setVideoname(showRow.productvideo);
+      // AddVideos([showRow.productvideo]);
+      setVideoURL(showRow.productvideo);
     }
   }, [showRow.productimage, showRow.productvideo]);
   return (
@@ -144,8 +148,7 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
       isOpen={isOpen}
       onClose={() => {
         AddImages([]);
-        AddVideos([]);
-
+        setVideoURL("");
         onClose();
       }}
       size={["xs", "lg", "xl"]}
@@ -230,14 +233,36 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
               {/* For Videos */}
               <Box w={"full"}>
                 <Text textAlign={"left"}>Videos</Text>
-
-                <Input
-                  type="file"
-                  onChange={handleVideos}
-                  hidden
-                  ref={videoRef}
-                />
-                <SimpleGrid columns={4} spacing={10}>
+                <HStack>
+                  <Input
+                    type="text"
+                    onChange={(e) => setVideoURL(e.target.value)}
+                    value={videoURL}
+                  />
+                  <Button
+                    colorScheme="teal"
+                    isLoading={videoLoading}
+                    onClick={async () => {
+                      setVideoLoading(true);
+                      // console.log(showRow.productname);
+                      return await axios
+                        .post(`${BASE_URL}/ProductVideo`, {
+                          productname: showRow.productname,
+                          videoURL: videoURL,
+                        })
+                        .then((resp) => {
+                          console.log(resp.data);
+                          setVideoLoading(false);
+                        })
+                        .catch((error) => {
+                          setVideoLoading(false);
+                        });
+                    }}
+                  >
+                    Save
+                  </Button>
+                </HStack>
+                {/* <SimpleGrid columns={4} spacing={10}>
                   {Videos.map((video, index) => {
                     return (
                       <div
@@ -301,7 +326,7 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
                       <FcVideoCall fontSize={80} />
                     </Box>
                   </Box>
-                </SimpleGrid>
+                </SimpleGrid> */}
               </Box>
             </Box>
           </VStack>

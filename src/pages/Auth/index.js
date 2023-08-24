@@ -12,6 +12,7 @@ import {
   Avatar,
   FormControl,
   InputRightElement,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 import { FaUserAlt, FaLock } from "react-icons/fa";
@@ -82,11 +83,14 @@ const Auth = () => {
               <InputGroup>
                 <InputLeftElement
                   pointerEvents="none"
-                  children={<CFaUserAlt color="gray.300" />}
+                  children={<CFaUserAlt color="gray.700" />}
                 />
                 <Input
                   type="email"
                   placeholder="email address"
+                  bgColor={"gray.200"}
+                  color={"black"}
+                  _placeholder={{ color: "gray.600" }}
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -99,10 +103,13 @@ const Auth = () => {
                 <InputLeftElement
                   pointerEvents="none"
                   color="gray.300"
-                  children={<CFaLock color="gray.300" />}
+                  children={<CFaLock color="gray.700" />}
                 />
                 <Input
                   type={showPassword ? "text" : "password"}
+                  bgColor={"gray.200"}
+                  color={"black"}
+                  _placeholder={{ color: "gray.600" }}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => {
@@ -110,7 +117,12 @@ const Auth = () => {
                   }}
                 />
                 <InputRightElement width="4.5rem">
-                  <Button h="1.75rem" size="sm" onClick={handleShowClick}>
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    bgColor={"gray.300"}
+                    onClick={handleShowClick}
+                  >
                     {showPassword ? "Hide" : "Show"}
                   </Button>
                 </InputRightElement>

@@ -166,8 +166,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
             <NavItem
               key={link.name}
               icon={link.icon}
-              bgColor={link.To === location.pathname ? "blue.500" : "white"}
+              bgColor={link.To === location.pathname ? "blue.500" : "gray.200"}
               color={link.To === location.pathname ? "white" : "black"}
+              // my={"2"}
             >
               {link.name}
             </NavItem>
