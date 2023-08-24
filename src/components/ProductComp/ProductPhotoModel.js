@@ -255,6 +255,7 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
                           setVideoLoading(false);
                         })
                         .catch((error) => {
+                          console.log(error);
                           setVideoLoading(false);
                         });
                     }}
