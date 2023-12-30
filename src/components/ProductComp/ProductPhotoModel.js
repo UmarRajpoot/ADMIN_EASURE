@@ -233,7 +233,13 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
               {/* For Videos */}
               <Box w={"full"}>
                 <Text textAlign={"left"}>Videos</Text>
-                <HStack>
+                <Input
+                  type="file"
+                  onChange={handleVideos}
+                  hidden
+                  ref={videoRef}
+                />
+                {/* <HStack>
                   <Input
                     type="text"
                     onChange={(e) => setVideoURL(e.target.value)}
@@ -262,8 +268,8 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
                   >
                     Save
                   </Button>
-                </HStack>
-                {/* <SimpleGrid columns={4} spacing={10}>
+                </HStack> */}
+                <SimpleGrid columns={4} spacing={10}>
                   {Videos.map((video, index) => {
                     return (
                       <div
@@ -316,7 +322,7 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
                         </Box>
                       </Box>
                       <Text fontSize={"xs"}>{Videoname}</Text>
-                      <Progress h={"1"} mt={"2"} value={photoProgress} />
+                      <Progress h={"1"} mt={"2"} value={videoProgress} />
                     </div>
                   )}
                   <Box height="80px">
@@ -327,7 +333,7 @@ const ProductPhotoModel = ({ isOpen, onClose, showRow }) => {
                       <FcVideoCall fontSize={80} />
                     </Box>
                   </Box>
-                </SimpleGrid> */}
+                </SimpleGrid>
               </Box>
             </Box>
           </VStack>

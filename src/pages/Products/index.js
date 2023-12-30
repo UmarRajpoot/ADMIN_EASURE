@@ -12,7 +12,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddProductModel from "../../components/ProductComp/AddProductModel";
 import { Field, Form, Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,37 +39,37 @@ const Products = () => {
   // console.log("Out Side", getParentCategories);
 
   // For Colors
-  const [ColorCategory, setColorCategory] = useState([]);
-  const [currentCategory, setcurrentCategory] = useState("");
-  const [selectedColor, setSelectedColor] = useState([]);
+  // const [ColorCategory, setColorCategory] = useState([]);
+  // const [currentCategory, setcurrentCategory] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
 
   // For Sizes
   const [sizesList, setSizesList] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (ColorCategory.length !== 0) {
-      let filterColorCategory = ColorCategory.filter((filCat) => {
-        if (filCat.name === currentCategory) {
-          filCat.name = currentCategory;
-          filCat.colors = selectedColor;
-        } else {
-          return filCat;
-        }
-      });
+  // useEffect(() => {
+  //   if (ColorCategory.length !== 0) {
+  //     let filterColorCategory = ColorCategory.filter((filCat) => {
+  //       if (filCat.name === currentCategory) {
+  //         filCat.name = currentCategory;
+  //         filCat.colors = selectedColor;
+  //       } else {
+  //         return filCat;
+  //       }
+  //     });
 
-      console.log("Color Result", selectedColor);
-      console.log("Result", ColorCategory);
-    }
-  }, [ColorCategory, selectedColor]);
+  //     console.log("Color Result", selectedColor);
+  //     console.log("Result", ColorCategory);
+  //   }
+  // }, [ColorCategory, selectedColor]);
 
-  useEffect(() => {
-    if (selectedColor.length !== 0) {
-      console.log("Changed");
-      setSelectedColor([]);
-    }
-  }, [ColorCategory]);
+  // useEffect(() => {
+  //   if (selectedColor.length !== 0) {
+  //     console.log("Changed");
+  //     setSelectedColor([]);
+  //   }
+  // }, [ColorCategory]);
 
   function validateName(value, field) {
     let error;
@@ -187,21 +187,30 @@ const Products = () => {
         modelBody={
           <Formik
             initialValues={{
-              productname: "",
+              // productname: "",
               parent_cat_name: "",
               person_name: "",
               varient_name: "",
               type_name: "",
               type_style_name: "",
               price: "",
-              sizes: "",
-              colorsCateg: "",
+              // sizes: [],
+              // colorsCateg: "",
             }}
             onSubmit={async (values, actions) => {
+              // console.log(
+              //   `${values.parent_cat_name}-${values.person_name}-${values.type_name}-${values.type_style_name}`,
+              //   values.parent_cat_name,
+              //   values.person_name,
+              //   values.varient_name,
+              //   values.type_name,
+              //   values.type_style_name,
+              //   Number(values.price),
+              //   sizesList,
+              //   selectedColor
+              // );
               await addProduct(
-                `${values.parent_cat_name.toLowerCase()}-${values.person_name.toLowerCase()}-${values.type_name.toLowerCase()}-${
-                  values.type_style_name
-                }`,
+                `${values.parent_cat_name}-${values.person_name}-${values.type_name}-${values.type_style_name}`,
                 values.parent_cat_name,
                 values.person_name,
                 values.varient_name,
@@ -209,11 +218,11 @@ const Products = () => {
                 values.type_style_name,
                 Number(values.price),
                 sizesList,
-                ColorCategory
+                selectedColor
               )
                 .then(() => {
-                  setColorCategory([]);
-                  setSelectedColor([]);
+                  // setColorCategory([]);
+                  // setSelectedColor([]);
                   setSizesList([]);
                   actions.setSubmitting(false);
                   onClose();
@@ -466,7 +475,7 @@ const Products = () => {
                         })}
                       </HStack>
                       <HStack alignItems={"flex-start"}>
-                        <Field
+                        {/* <Field
                           name="colorsCateg"
                           validate={(value) =>
                             validateName(value, "Choose Color Category")
@@ -517,7 +526,7 @@ const Products = () => {
                               </FormErrorMessage>
                             </FormControl>
                           )}
-                        </Field>
+                        </Field> */}
                         <Field
                           name="colors"
                           validate={(value) =>
@@ -531,23 +540,28 @@ const Products = () => {
                               }
                               isRequired
                               onChange={(e) => {
-                                if (selectedColor.length === 0) {
-                                  setSelectedColor([e.target.value]);
-                                } else {
-                                  let filterColor = selectedColor.filter(
-                                    (filCat) => filCat === e.target.value
-                                  );
-                                  console.log(
-                                    "Filtered Color",
-                                    filterColor.length
-                                  );
-                                  if (filterColor.length === 0) {
-                                    setSelectedColor((prev) => [
-                                      ...prev,
-                                      e.target.value,
-                                    ]);
-                                  }
-                                }
+                                let colorname = getallColors.find(
+                                  (color) => color.colorcode === e.target.value
+                                );
+                                setSelectedColor({
+                                  name: colorname.name,
+                                  code: e.target.value,
+                                });
+                                // else {
+                                //   let filterColor = selectedColor.filter(
+                                //     (filCat) => filCat === e.target.value
+                                //   );
+                                //   console.log(
+                                //     "Filtered Color",
+                                //     filterColor.length
+                                //   );
+                                //   if (filterColor.length === 0) {
+                                //     setSelectedColor((prev) => [
+                                //       ...prev,
+                                //       e.target.value,
+                                //     ]);
+                                //   }
+                                // }
                               }}
                             >
                               <FormLabel>Colors</FormLabel>
@@ -564,7 +578,6 @@ const Products = () => {
                                   );
                                 })}
                               </Select>
-
                               <FormErrorMessage>
                                 {form.errors.colors}
                               </FormErrorMessage>
@@ -572,7 +585,7 @@ const Products = () => {
                           )}
                         </Field>
                       </HStack>
-                      <Stack>
+                      {/* <Stack>
                         {ColorCategory.map((coloCat, index) => {
                           return (
                             <Box key={index}>
@@ -607,9 +620,7 @@ const Products = () => {
                             </Box>
                           );
                         })}
-                        {/* <Text fontSize={"xs"}>ICONIC</Text>
-                        <Text fontSize={"xs"}>INJECTION</Text> */}
-                      </Stack>
+                      </Stack> */}
 
                       {/* <Field name="slug" validate={validateName}>
                         {({ field, form }) => (
